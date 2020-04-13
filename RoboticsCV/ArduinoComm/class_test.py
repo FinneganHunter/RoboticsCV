@@ -3,11 +3,11 @@ from RoboticsCV import ComputerVision
 
 # https://gpiozero.readthedocs.io/en/stable/api_output.html#pwmoutputdevice
 
-
+# TODO: make this test the actual class defined communication pins on the arduino, redundant otherwise
 def comm_verify():
     try:
         # TODO: send ping & receive ping on each of the 4 pins
-        print("see RoboticsCV.Image-Proc.class_test TODO")
+        print("see RoboticsCV.Image-Proc.class_test TODOs")
 
     except IOError as e:
         print(str(e))
