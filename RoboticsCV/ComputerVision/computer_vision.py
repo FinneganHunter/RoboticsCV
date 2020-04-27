@@ -13,6 +13,7 @@ import cv2 as cv
 # TODO: add the feed passing from this package to the video feed module
 
 onerun_flag = False
+face_data = {}
 
 
 def video_feed(cam_num: int = 0):
@@ -33,35 +34,37 @@ def video_feed(cam_num: int = 0):
 
 # TODO: implement if multiple similar rois are within a few pixels of each other, an average is taken for a master roi
 def obj_recog(cap):
-    face_cascade = cv.CascadeClassifier('.../resources/haar-cascade/haarcascade_frontalface_default.xml')
+    """runs object recognition any passed cascade"""
+
+    # TODO: future proofing for different object cascades, cascade_name become passable
+    cascade_name = 'haarcascade_frontalface_default.xml'
+    roi_obj_color, roi_obj_gray = [0], [0]
+
+    obj_cascade = cv.CascadeClassifier(f'.../resources/haar-cascade/{cascade_name}')
 
     ret, img = cap.read()
     gray_img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
-    faces = face_cascade.detectMultiScale(gray_img, 1.3, 5)
+    objs = obj_cascade.detectMultiScale(gray_img, 1.3, 5)
     # below: generic placeholder for any number of objects to be recognized
     # objs = obj_cascade.detectMultiScale(gray_img, 1.3, 5)
 
     # roi_finder(faces, 'faces', img, gray_img)
     # roi_finder(objs, 'faces', img, gray_img)
 
-    for (x, y, w, h) in faces:
-        cv.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
+    # TODO: copy changes from face_reco about object tracking into obj_recog
 
-        roi_face_gray = gray_img[y:y + h, x:x + w]
-        roi_face_color = img[y:y + h, x:x + w]
+    detected = 0 if not len(objs) else 1
 
-    """
-    for (x, y, w, h) in objs:
-        cv.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
+    if detected:
+        for (x, y, w, h) in objs:
+            cv.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
-        roi_obj_gray = gray_img[y:y + h, x:x + w]
-        roi_obj_color = img[y:y + h, x:x + w]
+            # This is the actual pixels of the object within the video frame
+            roi_obj_gray = gray_img[y:y + h, x:x + w]
+            roi_obj_color = img[y:y + h, x:x + w]
 
-    return roi_obj_gray, roi_obj_color
-    """
-
-    return roi_face_color, roi_face_gray
+    return roi_obj_color, roi_obj_gray
 
 
 """
@@ -71,10 +74,9 @@ def roi_finder(recog, recog_name, img_param, gray_img_param):
     print('idk')
 """
 
-face_data = {}
-
 
 def haarcascade_test(cap, escape_key='q'):  # works as intended, single cascade running
+    """single cascade test, """
 
     global face_data
     face_cascade = cv.CascadeClassifier('../resources/haar-cascade/haarcascade_frontalface_default.xml')
